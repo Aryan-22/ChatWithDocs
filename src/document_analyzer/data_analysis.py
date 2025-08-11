@@ -22,7 +22,7 @@ class DocumentAnalyzer:
             #Prepare parsers
             self.parser = JsonOutputParser(pydantic_object=MetaData)
             self.fixing_parser = OutputFixingParser.from_llm(parser = self.parser,llm = self.llm)
-            self.prompt = document_analysis_prompt
+            self.prompt = PROMPT_REGISTRY["document_analysis"]
             self.log.info("Document Analyser initialised successfully")
 
 
