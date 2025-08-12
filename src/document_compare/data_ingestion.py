@@ -64,7 +64,7 @@ class DocumentIngestion:
         """
 
         try:
-            with fitz.open(self,pdf_path) as doc:
+            with fitz.open(pdf_path) as doc:
                 if doc.is_encrypted:
                     raise ValueError(f"PDF is encrypted: {pdf_path.name}")
                 
@@ -86,7 +86,7 @@ class DocumentIngestion:
     def combine_documents(self)->str:
         try:
             content_dict = {}
-            doc_parts = {}
+            doc_parts = []
             for filename in sorted(self.base_dir.iterdir()):
                 if filename.is_file() and filename.suffix == ".pdf":
                     content_dict[filename.name] = self.read_pdf(filename)
