@@ -5,8 +5,8 @@ import fitz
 from logger.custom_logger import CustomLogger
 from exception.custom_exception import DocumentPortalException
 
-class DocumentComparator:
-    def __init__(self,base_dir):
+class DocumentIngestion:
+    def __init__(self,base_dir:str = "data\document_compare"):
         self.log = CustomLogger().get_logger(__name__)
         self.base_dir = Path(base_dir)
         self.base_dir.mkdir(parents=True,exist_ok=True)
@@ -17,7 +17,15 @@ class DocumentComparator:
         Deletes existing files at the specified paths
         """
         try:
-            pass
+            if self.base_dir.exists() and self.base_dir.is_dir():
+                for file in self.base_dir.iterdir():
+                    if file.is_file():
+                        file.unlink()
+                        self.log.info("File deleted",path = str(file))
+                self.log.info("Directory cleaned",directory = str(self.base_dir))
+
+            
+
         except Exception as e:
             self.log.error(f"Error in deleting existing file: {e}")
             raise DocumentPortalException("An error occured while deleting existing files.",sys)
@@ -74,3 +82,21 @@ class DocumentComparator:
             self.log.error(f"Error reading PDF: {e}")
             raise DocumentPortalException("An error occured while reading the PDF.",sys)
         
+
+    def combine_documents(self)->str:
+        try:
+            content_dict = {}
+            doc_parts = {}
+            for filename in sorted(self.base_dir.iterdir()):
+                if filename.is_file() and filename.suffix == ".pdf":
+                    content_dict[filename.name] = self.read_pdf(filename)
+
+            for filename,content in content_dict.items():
+                doc_parts.append(f"Document: {filename}\n{content}")
+
+            combined_text = "\n\n".join(doc_parts)
+            self.log.info("Documents combined",count = len(doc_parts))
+            return combined_text
+        except Exception as e:
+            self.log.error(f"Error combining documents: {e}")
+            raise DocumentPortalException("An error occurred while combining documents.",sys)
