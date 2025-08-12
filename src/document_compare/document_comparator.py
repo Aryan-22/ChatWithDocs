@@ -9,7 +9,7 @@ from utils.model_loader import ModelLoader
 from langchain_core.output_parsers import JsonOutputParser
 from langchain.output_parsers import OutputFixingParser
 
-class DocumentComparatorLLM::
+class DocumentComparatorLLM:
     def __init__(self):
         
         self.log = CustomLogger().get_logger(__name__)
@@ -26,23 +26,34 @@ class DocumentComparatorLLM::
         self.log.info("DocumentComparatorLLM initialised with model and parser.")
 
 
-    def compare_documents(self):
+    def compare_documents(self,combined_docs)-> pd.DataFrame:
         """
         Compares two documents and returns a structured comparison.
         """
         try:
-            pass
+            inputs = {
+
+                "combined_docs":combined_docs,
+                "format_instruction":self.parser.get_format_instructions()
+            }
+            self.log.info(f"Starting document comparison",inputs = inputs)
+            response = self.chain.invoke(inputs)
+            return self._format_response(response)
         except Exception as e:
             self.log.error(f"Error in compare_documents: {e}")
             raise DocumentPortalException("An error occured while comparing documents",sys)
         
 
-    def _format_response(self):
+    def _format_response(self,response_parsed:list[dict]) -> pd.DataFrame:
         """
         Formats the response from the LLM into a structured format.
         """
         try:
-            pass
+            df = pd.DataFrame(response_parsed)
+            self.log.info("Response formatted into DataFrame",dataframe = df)
+            return df
+
+            
         except Exception as e:
             self.log.error(f"Error in formatting response into DataFrame: {e}")
             raise DocumentPortalException("An error occured while comparing documents",sys)
