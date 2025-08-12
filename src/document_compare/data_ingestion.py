@@ -4,31 +4,17 @@ from pathlib import Path
 import fitz
 from logger.custom_logger import CustomLogger
 from exception.custom_exception import DocumentPortalException
-
+from datetime import datetime,timezone
+import uuid
 class DocumentIngestion:
-    def __init__(self,base_dir:str = "data\document_compare"):
+    def __init__(self,base_dir:str = "data\document_compare",session_id = None):
         self.log = CustomLogger().get_logger(__name__)
         self.base_dir = Path(base_dir)
-        self.base_dir.mkdir(parents=True,exist_ok=True)
-
-
-    def delete_existing_files(self):
-        """
-        Deletes existing files at the specified paths
-        """
-        try:
-            if self.base_dir.exists() and self.base_dir.is_dir():
-                for file in self.base_dir.iterdir():
-                    if file.is_file():
-                        file.unlink()
-                        self.log.info("File deleted",path = str(file))
-                self.log.info("Directory cleaned",directory = str(self.base_dir))
-
-            
-
-        except Exception as e:
-            self.log.error(f"Error in deleting existing file: {e}")
-            raise DocumentPortalException("An error occured while deleting existing files.",sys)
+        self.session_id = session_id or f"session_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}"
+        self.session_path = self.base_dir / self.session_id
+        self.session_path.mkdir(parents=True,exist_ok=True)
+        self.log.info("DocumentIngestion initialised.",session_path = str(self.session_path))
+    
         
         
 
@@ -36,11 +22,9 @@ class DocumentIngestion:
 
     def save_uploaded_files(self,reference_file,actual_file):
         """
-        Saves uploaded files to specific paths
+        Saves reference and actual PDF files in the session directory.
         """
         try:
-            self.delete_existing_files()
-            self.log.info("existing files deleted successfully.")
             ref_path = self.base_dir/ reference_file.name
 
             act_path = self.base_dir/ actual_file.name
@@ -74,7 +58,7 @@ class DocumentIngestion:
                     text = page.get_text()
                     if text.strip():
                         all_text.append(f"\n --- Page{page_num + 1} ---\n{text}")
-                
+                    
                 self.log.info("PDF read successfully",file = str(pdf_path),pages = len(all_text))
                 return "\n".join(all_text)
             
@@ -100,3 +84,23 @@ class DocumentIngestion:
         except Exception as e:
             self.log.error(f"Error combining documents: {e}")
             raise DocumentPortalException("An error occurred while combining documents.",sys)
+        
+    def clean_old_sessions(self,keep_latest:int = 3):
+        """
+        Optional method to delete older session folders,keeping only the latest N.
+        """
+        try:
+            session_folders = sorted(
+                [f for f in self.base_dir.iterdir() if f.is_dir()],
+                reverse = True
+            )
+
+            for folder in session_folders[keep_latest:]:
+                for file in folder.iterdir():
+                    file.unlink()
+                folder.rmdir()
+                self.log.info("Old session folder deleted",path = str(folder))
+        except Exception as e:
+            self.log.error("Error cleaning old session",error = str(e))
+            raise DocumentPortalException("Error in cleaning old sessions",sys)
+        
