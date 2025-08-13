@@ -5,7 +5,7 @@ from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_community.vectorstores import FAISS
 from langchain_core.runnables.history import RunnableWithMessageHistory
-from langchain.chains import create_history_aware_retreiver,create_retreival_chain
+from langchain.chains import create_history_aware_retriever, create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from utils.model_loader import ModelLoader
 from exception.custom_exception import DocumentPortalException
@@ -23,10 +23,10 @@ class ConversationalRAG:
             self.llm = self._load_llm()
             self.contexualize_prompt = PROMPT_REGISTRY[PromptType.CONTEXTUALIZE_QUESTION.value]
             self.qa_prompt = PROMPT_REGISTRY[PromptType.CONTEXT_QA.value]
-            self.history_aware_retriever = create_history_aware_retreiver(self.llm,self.retriever,self.contexualize_prompt)
+            self.history_aware_retriever = create_history_aware_retriever(self.llm,self.retriever,self.contexualize_prompt)
             self.log.info("Created history-aware retriever",session_id = session_id)
             self.qa_chain = create_stuff_documents_chain(self.history_aware_retriever,self.qa_prompt)
-            self.rag_chain = create_retreival_chain(self.history_aware_retriever,self.qa_chain)
+            self.rag_chain = create_retrieval_chain(self.history_aware_retriever,self.qa_chain)
 
             self.log.info("Created RAG chain",session_id = session_id)
             self.chain = RunnableWithMessageHistory(self.rag_chain,self._get_session_history,input_messages_key="input",
