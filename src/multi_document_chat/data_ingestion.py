@@ -73,17 +73,27 @@ class DocumentIngestor:
             if not documents:
                 raise DocumentPortalException("No valid documents loaded",sys)
             self.log.info("All documents loaded",total_docs = len(documents),session_id = self.session_id)
-            return self.__create_retriever(documents)
+            return self._create_retriever(documents)
         except Exception as e:
             self.log.error("Failed to ingest files",error = str(e))
             raise DocumentPortalException("Ingestion error in DocumentIngestor",sys)
         
 
-    def __create_retriever(self,documents):
+    def _create_retriever(self,documents):
         try:
+            splitter = RecursiveCharacterTextSplitter(chunk_size = 1000,chunk_overlap = 300)
+            chunks = splitter.split_documents(documents)
+            self.log.info("Documents split into chunks",total_chunks = len(chunks),session_id = self.session_id)
             embeddings = ModelLoader().load_embeddings()
             vectorstore = FAISS.from_documents(documents,embeddings)
-            return vectorstore.as_retriever()
+
+            #saving faiss index under session folder
+            vectorstore.save_local(str(self.session_faiss_dir))
+            self.log.info("FAISS index saved to disk",path = str(self.session_faiss_dir),session_id = self.session_id)
+            retriever =  vectorstore.as_retriever(search_type = "similarity",search_kwargs = {"k":5})
+            self.log.info("FAISS retriever created and ready to use",session_id = self.session_id)
+            return retriever
+
         except Exception as e:
             self.log.error("Failed to create retriever",error = str(e))
             raise DocumentPortalException("Retrieval error in DocumentIngestor",sys)
