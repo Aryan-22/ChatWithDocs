@@ -10,7 +10,7 @@ class CustomLogger:
         os.makedirs(self.logs_dir, exist_ok=True)
 
         # Timestamped log file (for persistence)
-        log_file = f"{datetime.now().strftime('%m_%d_%Y_%H_%M_%S')}.log"
+        log_file = f"{datetime.now().strftime('%d_%m_%Y_%H_%M_%S')}.log"
         self.log_file_path = os.path.join(self.logs_dir, log_file)
 
     def get_logger(self, name=__file__):

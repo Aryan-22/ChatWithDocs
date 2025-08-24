@@ -16,7 +16,8 @@ packages = [
     "fastapi",
     "uvicorn",
     "python-multipart",
-    "docx2txt"
+    "docx2txt",
+    "pypdf"
 ]
 for pkg in packages:
     try:
@@ -25,3 +26,6 @@ for pkg in packages:
     except importlib.metadata.PackageNotFoundError:
         print(f"{pkg} (not installed)")
 
+# # serve static & templates
+# app.mount("/static", StaticFiles(directory="../static"), name="static")
+# templates = Jinja2Templates(directory="../templates")
