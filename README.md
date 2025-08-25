@@ -117,8 +117,4 @@ The following are the main API endpoints provided by the application:
 
 Contributions are welcome! Please feel free to open issues or submit pull requests.
 
-## License
-
-This project is licensed under the MIT License. See the `LICENSE` file for details. (Note: A `LICENSE` file was not found in the repository. Please add one if you intend to use the MIT License.)
-
 
