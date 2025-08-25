@@ -20,7 +20,7 @@ To set up the project locally, follow these steps:
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://aryan-22/document_portal_project.git
+    git clone https://aryan-22/ChatWithDocs.git
     cd document_portal_project
     ```
 
