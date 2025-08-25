@@ -115,7 +115,7 @@ The following are the main API endpoints provided by the application:
 ## Technologies Used
 
 -   **Backend**: FastAPI
--   **Frontend**: Streamlit
+-   **Frontend**: Html,CSS
 -   **Language Models**: LangChain, LangChain Community, LangChain Core, LangChain Groq, LangChain Google GenAI
 -   **Vector Database**: FAISS
 -   **Document Processing**: PyMuPDF, docx2txt
