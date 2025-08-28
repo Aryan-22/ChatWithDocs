@@ -8,6 +8,7 @@ This project provides a Python-based Document Portal API built with FastAPI, des
 
 - **Document Analysis**: Analyze uploaded PDF documents to extract key information.
 - **Document Comparison**: Compare two PDF documents to identify differences and similarities.
+- **Multi Document Chat**: Chat with one or more than one document at once.
 - **Conversational AI (RAG)**: Ingest documents to build a FAISS index and enable conversational queries using Retrieval Augmented Generation.
 - **FastAPI Backend**: A robust and scalable API built with FastAPI.
 - **PDF Handling**: Efficiently processes and extracts text from PDF documents using PyMu-PDF.
@@ -19,7 +20,7 @@ To set up the project locally, follow these steps:
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://aryan-22/document_portal_project.git
+    git clone https://aryan-22/ChatWithDocs.git
     cd document_portal_project
     ```
 
@@ -53,16 +54,6 @@ python -m uvicorn main_archive:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 The API documentation will be available at `http://localhost:8000/docs`.
-
-### Running the Streamlit UI
-
-To launch the Streamlit user interface:
-
-```bash
-streamlit run streamlit_ui.py
-```
-
-The Streamlit application will typically open in your web browser at `http://localhost:8501`.
 
 ## API Endpoints
 
@@ -115,7 +106,7 @@ The following are the main API endpoints provided by the application:
 ## Technologies Used
 
 -   **Backend**: FastAPI
--   **Frontend**: Streamlit
+-   **Frontend**: Html,CSS
 -   **Language Models**: LangChain, LangChain Community, LangChain Core, LangChain Groq, LangChain Google GenAI
 -   **Vector Database**: FAISS
 -   **Document Processing**: PyMuPDF, docx2txt
@@ -125,9 +116,4 @@ The following are the main API endpoints provided by the application:
 ## Contributing
 
 Contributions are welcome! Please feel free to open issues or submit pull requests.
-
-## License
-
-This project is licensed under the MIT License. See the `LICENSE` file for details. (Note: A `LICENSE` file was not found in the repository. Please add one if you intend to use the MIT License.)
-
 
